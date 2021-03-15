@@ -14,7 +14,6 @@
     <name>files-converter-api</name>
     <description>API To Convert Different File Formats</description>
     <properties>
-        <java.version>11</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -63,6 +62,8 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+
+        <finalName>files-converter-API</finalName>
     </build>
 
 </project>
