@@ -1,15 +1,20 @@
 package com.odazie.filesconverterapi.service;
 
+import com.aspose.pdf.Document;
+import com.aspose.pdf.SaveFormat;
+import com.aspose.pdf.internal.ms.System.IO.Stream;
 import com.odazie.filesconverterapi.exception.FileStorageException;
 import com.odazie.filesconverterapi.exception.MyFileNotFoundException;
 import com.odazie.filesconverterapi.property.FileStorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -19,6 +24,7 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class FileStorageService {
+
 
     private final Path fileStorageLocation;
 
@@ -36,7 +42,22 @@ public class FileStorageService {
 
 
     public MultipartFile convertPDFtoDOC(MultipartFile file){
-        return null;
+
+        Document document = new Document("files/"+ file.getOriginalFilename());
+        String savingFileName = file.getOriginalFilename().replace(".pdf", "")+".docx";
+        document.save( savingFileName, SaveFormat.DocX);
+
+        Path  path = Paths.get(savingFileName);
+        String contentType = "text/plain";
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(path);
+        } catch (final IOException e) {
+        }
+        MultipartFile result = new MockMultipartFile(savingFileName,
+                savingFileName, contentType, content);
+
+        return result;
     }
 
     public MultipartFile convertDOCtoPDF(MultipartFile file){
@@ -48,7 +69,7 @@ public class FileStorageService {
     }
 
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file) throws IOException {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -62,10 +83,14 @@ public class FileStorageService {
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
+            Files.deleteIfExists(Paths.get(file.getOriginalFilename()));
             return fileName;
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
+
+
+
     }
 
     public Resource loadFileAsResource(String fileName) {
