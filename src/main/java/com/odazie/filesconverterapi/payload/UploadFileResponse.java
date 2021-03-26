@@ -1,10 +1,14 @@
 package com.odazie.filesconverterapi.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class UploadFileResponse {
 
     private String fileName;
     private String fileDownloadUri;
+    @JsonIgnore
     private String fileType;
+    @JsonIgnore
     private long size;
 
     public UploadFileResponse(String fileName, String fileDownloadUri, String fileType, long size) {
