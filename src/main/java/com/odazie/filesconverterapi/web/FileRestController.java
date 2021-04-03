@@ -41,10 +41,24 @@ public class FileRestController {
     }
 
     @PostMapping("/convert-doc-pdf")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+    public UploadFileResponse convertDOCXtoPDF(@RequestParam("file") MultipartFile file) throws Exception {
         fileStorageService.storeFile(file);
         MultipartFile convertDOCtoPDF = fileStorageService.convertDOCtoPDF(file);
         String fileName = fileStorageService.storeFile(convertDOCtoPDF);
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        return new UploadFileResponse(fileName, fileDownloadUri,
+                file.getContentType(), file.getSize());
+    }
+
+    @PostMapping("/convert-image-pdf")
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+        fileStorageService.storeFile(file);
+        MultipartFile convertImageToPDF = fileStorageService.convertImageToPDF(file);
+        String fileName = fileStorageService.storeFile(convertImageToPDF);
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
                 .path(fileName)
