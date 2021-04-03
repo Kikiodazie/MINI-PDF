@@ -2,7 +2,6 @@ package com.odazie.filesconverterapi.service;
 
 import com.aspose.pdf.Document;
 import com.aspose.pdf.SaveFormat;
-import com.aspose.pdf.internal.ms.System.IO.Stream;
 import com.odazie.filesconverterapi.exception.FileStorageException;
 import com.odazie.filesconverterapi.exception.MyFileNotFoundException;
 import com.odazie.filesconverterapi.property.FileStorageProperties;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -60,8 +58,25 @@ public class FileStorageService {
         return result;
     }
 
-    public MultipartFile convertDOCtoPDF(MultipartFile file){
-        return null;
+    public MultipartFile convertDOCtoPDF(MultipartFile file) throws Exception {
+
+        com.aspose.words.Document document = new com.aspose.words.Document("files/"+ file.getOriginalFilename());
+        String savingFileName = file.getOriginalFilename().replace(".docx", "")+".pdf";
+
+        document.save(savingFileName);
+
+        Path  path = Paths.get(savingFileName);
+
+        String contentType = "application/pdf";
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(path);
+        } catch (final IOException e) {
+        }
+        MultipartFile result = new MockMultipartFile(savingFileName,
+                savingFileName, contentType, content);
+
+        return result;
     }
 
     public MultipartFile convertJPEGtoPDF(MultipartFile file){

@@ -26,11 +26,25 @@ public class FileRestController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping("/convert-pdf-docx")
+    public UploadFileResponse convertPDFtoDocx(@RequestParam("file") MultipartFile file) throws IOException {
         fileStorageService.storeFile(file);
         MultipartFile convertPDFtoDOC = fileStorageService.convertPDFtoDOC(file);
         String fileName = fileStorageService.storeFile(convertPDFtoDOC);
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        return new UploadFileResponse(fileName, fileDownloadUri,
+                file.getContentType(), file.getSize());
+    }
+
+    @PostMapping("/convert-doc-pdf")
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+        fileStorageService.storeFile(file);
+        MultipartFile convertDOCtoPDF = fileStorageService.convertDOCtoPDF(file);
+        String fileName = fileStorageService.storeFile(convertDOCtoPDF);
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
                 .path(fileName)
