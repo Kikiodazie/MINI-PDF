@@ -2,6 +2,8 @@ package com.odazie.filesconverterapi.service;
 
 import com.aspose.pdf.Document;
 import com.aspose.pdf.SaveFormat;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.odazie.filesconverterapi.exception.FileStorageException;
 import com.odazie.filesconverterapi.exception.MyFileNotFoundException;
 import com.odazie.filesconverterapi.property.FileStorageProperties;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -65,7 +68,32 @@ public class FileStorageService {
 
         document.save(savingFileName);
 
-        Path  path = Paths.get(savingFileName);
+        return convertMutltipartFile(savingFileName);
+    }
+
+    public MultipartFile convertImageToPDF(MultipartFile file){
+
+        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+        String input = "files/"+ file.getOriginalFilename();
+        String output = file.getOriginalFilename()+".pdf";
+        try {
+            FileOutputStream fos = new FileOutputStream(output);
+            PdfWriter writer = PdfWriter.getInstance(document, fos);
+            writer.open();
+            document.open();
+            document.add(Image.getInstance(input));
+            document.close();
+            writer.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return convertMutltipartFile(output);
+    }
+
+    private MultipartFile convertMutltipartFile(String output) {
+        Path path = Paths.get(output);
 
         String contentType = "application/pdf";
         byte[] content = null;
@@ -73,14 +101,10 @@ public class FileStorageService {
             content = Files.readAllBytes(path);
         } catch (final IOException e) {
         }
-        MultipartFile result = new MockMultipartFile(savingFileName,
-                savingFileName, contentType, content);
+        MultipartFile result = new MockMultipartFile(output,
+                output, contentType, content);
 
         return result;
-    }
-
-    public MultipartFile convertJPEGtoPDF(MultipartFile file){
-        return null;
     }
 
 
