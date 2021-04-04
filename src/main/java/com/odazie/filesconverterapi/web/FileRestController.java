@@ -2,6 +2,7 @@ package com.odazie.filesconverterapi.web;
 
 import com.odazie.filesconverterapi.payload.UploadFileResponse;
 import com.odazie.filesconverterapi.service.FileStorageService;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 @RestController
+@Api(description = "PDF CONVERTER ENDPOINTS")
 public class FileRestController {
     private static final Logger logger = LoggerFactory.getLogger(FileRestController.class);
 
