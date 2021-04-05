@@ -59,7 +59,7 @@ public class FileRestController {
     }
 
     @PostMapping("/convert-image-pdf")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+    public UploadFileResponse convertImageToPDF(@RequestParam("file") MultipartFile file) throws Exception {
         fileStorageService.storeFile(file);
         MultipartFile convertImageToPDF = fileStorageService.convertImageToPDF(file);
         String fileName = fileStorageService.storeFile(convertImageToPDF);

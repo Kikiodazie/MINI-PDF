@@ -16,7 +16,8 @@ While this is not a 100% working clone as the app is pretty large with a lot of 
 - Download converted files
 
 
-See DOCS for working endpoints
+See [DOCS](http://minipdf-env.eba-92n2biwd.us-east-2.elasticbeanstalk.com//swagger-ui.html#/file-rest-controller) for working endpoints
+Checkout the [Docker image repository here](https://hub.docker.com/repository/docker/kikiodazie/filesconverterapidocker)
 
 ## Development
 
